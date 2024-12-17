@@ -15,7 +15,6 @@ data = read_lines_batchwise(filename, 1)
 positions = []
 DELIMITER = '\t'
 keys = []
-values = []
 
 with open('values.bin', 'wb') as values_file, open('keys.bin', 'wb') as keys_file:
     # Add a placeholder header at the beginning so
@@ -33,16 +32,13 @@ with open('values.bin', 'wb') as values_file, open('keys.bin', 'wb') as keys_fil
 
         # The serialization concern can be dealt with at a higher level.
         value = DELIMITER.join(kvp[1:])
-        values.append(value)
 
-
-    # This allows values to be of variable length.
-    for value in values:
+        # This allows values to be of variable length.
         encoded_text = value.strip().encode('utf-8')
         length_prefix = len(encoded_text)
         positions.append(values_file.tell())
-        values_file.write(struct.pack('I', length_prefix))  # Write length prefix
-        values_file.write(encoded_text)  # Write the value text
+        values_file.write(struct.pack('I', length_prefix))
+        values_file.write(encoded_text)
 
 
     # Write the position of the value in `values.bin` at the key ith byte in `keys.bin`.
