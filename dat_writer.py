@@ -31,24 +31,27 @@ for datum in data:
     value = DELIMITER.join(kvp[1:])
     values.append(value)
 
+
+with open('values.bin', 'wb') as values_file:
 # This allows values to be of variable length.
-with open('values.bin', 'wb') as file:
     # Add a placeholder header at the beginning so
     # key-misses don't resolve to a zero-index
-    file.write(b'VALUES')
+    values_file.write(b'VALUES')
 
     for value in values:
         encoded_text = value.strip().encode('utf-8')
         length_prefix = len(encoded_text)
-        positions.append(file.tell())
-        file.write(struct.pack('I', length_prefix))  # Write length prefix
-        file.write(encoded_text)  # Write the value text
+        positions.append(values_file.tell())
+        values_file.write(struct.pack('I', length_prefix))  # Write length prefix
+        values_file.write(encoded_text)  # Write the value text
+
+
 
 # Write the position of the value in `values.bin` at the key ith byte in `keys.bin`.
-with open('keys.bin', 'wb') as file:
+with open('keys.bin', 'wb') as keys_file:
     for i in range(len(keys)):
         # Now position[i] corresponds the location of the corresponding value in 'values.bin'
         # Multiply key value by 8 to accommodate 64-bit (8 byte) representation.
-        file.seek(keys[i] * 8)
-        file.write(struct.pack('<Q', positions[i]))  # Write the position
+        keys_file.seek(keys[i] * 8)
+        keys_file.write(struct.pack('<Q', positions[i]))  # Write the position
 
