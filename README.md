@@ -13,7 +13,7 @@ A Python-based tool for creating and querying a key-value mapping backed by **di
 ## How It Works
 
 ### Data Assembly
-Use the `dat_writer.py` script to process a tab-separated file  (e.g. ```python dat_writer.py data.psv```)
+Use the `dat_writer.py` script to process a tab-separated file  (e.g. ```python dat_writer.py example_data.psv```)
 
 This creates 2 files that use direct-addressing to create a key-value mapping:
 - **`keys.bin`**: Maps integer keys to corresponding a byte position in `values.bin`.
@@ -21,7 +21,13 @@ This creates 2 files that use direct-addressing to create a key-value mapping:
 
 
 ### Querying
-Use the `key_lookup.py` client to retrieve values by key. For a given key _k_, the client will:
+Use the `key_lookup.py` client to retrieve values by key. For example:
+```
+	$ python key_lookup.py 313
+	Train like a warrior, think like a sage	
+```
+
+For a given key _k_, the client will:
 1. Seek to the _k<sup>th</sup>_ byte in `keys.bin`.
 2. Retrieve the position of the corresponding value in `values.bin`.
 3. Seek to the value position in `values.bin` and read the value.
