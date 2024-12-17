@@ -17,8 +17,6 @@ def lookup(key):
             print("No such key exists in the collection")
             return None
 
-        print(f'Position is: {position}')
-    
 
     with open('values.bin', 'rb') as file:
         file.seek(position)
