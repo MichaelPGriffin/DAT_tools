@@ -9,9 +9,7 @@ def read_lines_batchwise(filename, batch_size=100):
                 break
             yield lines
 
-# filename = sys.argv[1]
-# filename = 'data.tsv'
-filename = r"C:\Users\Owner\projects\dat_toolkit\data.tsv"
+filename = sys.argv[1]
 data = read_lines_batchwise(filename, 1)
 
 positions = []
@@ -33,11 +31,7 @@ for datum in data:
     value = DELIMITER.join(kvp[1:])
     values.append(value)
 
-# Print out the values and keys for debugging
-print(values)
-print(keys)
-
-# This allows values to abe of variable length.
+# This allows values to be of variable length.
 with open('values.bin', 'wb') as file:
     # Add a placeholder header at the beginning so
     # key-misses don't resolve to a zero-index
@@ -50,13 +44,11 @@ with open('values.bin', 'wb') as file:
         file.write(struct.pack('I', length_prefix))  # Write length prefix
         file.write(encoded_text)  # Write the value text
 
-# Print out the positions for debugging
-print(positions)
-
 # Write the position of the value in `values.bin` at the key ith byte in `keys.bin`.
-with open('keys.bin', 'wb') as file:  # Open in append mode
+with open('keys.bin', 'wb') as file:
     for i in range(len(keys)):
-        # Now, the position stored in 'positions' corresponds to the location
-        # of the corresponding value in 'values.bin'
-        file.seek(keys[i])  # Seek to the specified position in the file
+        # Now position[i] corresponds the location of the corresponding value in 'values.bin'
+        # Multiply key value by 8 to accommodate 64-bit (8 byte) representation.
+        file.seek(keys[i] * 8)
         file.write(struct.pack('<Q', positions[i]))  # Write the position
+

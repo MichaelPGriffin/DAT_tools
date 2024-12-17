@@ -3,9 +3,8 @@ import struct
 
 def lookup(key):
     with open('keys.bin', 'rb') as file:
-        file.seek(key)
-
         # 8 bytes ==> 64 bits
+        file.seek(key * 8)
         byte_count = file.read(8)
 
         if not byte_count:
@@ -23,7 +22,6 @@ def lookup(key):
 
     with open('values.bin', 'rb') as file:
         file.seek(position)
-        # Taking a guess at this number. Seems like a 4 byte prefix is enough?
         byte_count = file.read(4)
         
         if not byte_count:
